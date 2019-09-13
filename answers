@@ -1,0 +1,20 @@
+### Qual é o custo médio dos animais do tipo cachorro?
+
+    Animal.joins(:kind).where("kinds.description = 'Cachorro'").average(:monthly_cost).to_f
+
+### Quantos cachorros existem no sistema?
+
+    Animal.joins(:kind).where("kinds.description = 'Cachorro'").count
+
+### Qual o nome dos donos dos cachorros (Array de nomes)
+
+    Person.joins(:animals).where('animals.kind_id = ?', Kind.where(description: 'Cachorro').select(:id).first).pluck(:name)
+
+### Retorne as pessoas ordenando pelo custo que elas tem com os animais (Maior para menor)
+
+    Person.select("people.*, sum(animals.monthly_cost) as sum_monthly_cost").joins(:animals).group('people.id').order('sum_monthly_cost DESC')
+
+### Levando em consideração o custo mensal, qual será o custo de 3 meses de cada pessoa?
+
+    Person.joins(:animals).group('people.id').sum('monthly_cost * 3')
+
